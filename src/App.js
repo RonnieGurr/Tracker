@@ -1,26 +1,46 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Header from './components/public/Header';
+import Login from './components/public/Login';
+import Dashboard from './components/private/Dashboard';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link, BrowserRouter, Redirect
+} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const Auth = require('./components/helpers/checkAuth');
+
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      authed : Auth.isAuthed()
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <Header />
+
+        <BrowserRouter>
+          <Switch>
+            <Route path='/login'>
+              <Login />
+            </Route>
+            <Route path='/dashboard'>
+              {this.state.authed ? 
+              <Dashboard />
+              :
+              <Redirect to='/login'/>
+            }
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </div>
+    )
+  }
 }
 
 export default App;

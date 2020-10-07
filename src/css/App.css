@@ -1,0 +1,89 @@
+body {
+    background-image: url('../components/images/login.jpg');
+    background-size: cover;
+}
+.login-form .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+    color: white;
+}
+.login-form form {
+    text-align: center;
+    padding: 30px;
+    background-color: #343a40;
+    border-radius: 20px;
+}
+.login-form button {
+    width: 130px;
+}
+@media only screen and (min-device-width : 768px) {
+    .login-form form {
+        width: 600px;
+    }
+}
+
+#login-error {
+    animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+} 
+@keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* END OF LOGIN */
+
+.dashboard {
+  margin-top: 10px
+}
+
+.content {
+  height: 100%;
+}
+.content .col-md-4 .container {
+  border: 1px solid #bbe1fa;
+  background-color: #343a40;
+  height: 100%;
+}
+.content .col-md-4:nth-last-child(-n+3) {
+  margin-top: 10px;
+}
+
+.sidebar {
+  border-right: 1px solid #bbe1fa;
+  border-top: 1px solid #bbe1fa;
+  border-bottom: 1px solid #bbe1fa;
+  height: calc(100vh - 76px);
+  color: white;
+  background-color: #343a40;;
+}
+.side-nav-item {
+  font-size: 20px;
+  padding-left: 15px;
+}
+.side-nav-item p {
+  margin: 0px;
+}
+.side-nav-item p:hover {
+  cursor: pointer;
+}
+
+.content .col-md-3 {
+  background-color: red;
+}
