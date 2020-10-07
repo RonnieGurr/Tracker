@@ -39,7 +39,7 @@ $ db.users.save({ email: "YOUR EMAIL", password: "YOUR MD5 PASSWORD" })
 ```bash
 $ cd Tracker/
 $ node
-$ require('crypto').randomBytes(64).toString('hex') x 2
+$ require('crypto').randomBytes(64).toString('hex') - x2
 $ nano .env
 
     API_PORT= THE PORT YOU WANT THE BACKEND SERVER TO RUN ON
