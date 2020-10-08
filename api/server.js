@@ -15,12 +15,20 @@ app.use(bodyParser.json(), cors(
     AccessControlAllowHeaders: 'Authorization'}
 ), express.json())
 
+app.use(function(err, req, res, next) { // Check if incomming JSON request has syntax errors
+    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+      res.sendStatus(400)
+    } else next();
+  });
+
 //Routes
 const loginRoute = require('./routes/login');
 const getData = require('./routes/getData');
+const saveData = require('./routes/saveData');
 
 app.use('/login', loginRoute)
 app.use('/get-data', getData)
+app.use('/save-data', saveData)
 
 app.listen(process.env.API_PORT, () => {
     console.log(`Listening on port ${process.env.API_PORT}`)
