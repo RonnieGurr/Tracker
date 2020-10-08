@@ -57,4 +57,6 @@ $ nano .env
 $ cd Tracker/
 $ npm start
 $ npm run devStart
+  OR
+$ node api/server.js
 ```
