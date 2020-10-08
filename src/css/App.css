@@ -56,10 +56,14 @@ body {
 .content {
   height: 100%;
 }
-.content .col-md-4 .container {
+.content .col-md-4 .container, .content .col-md-8 .container {
   border: 1px solid #bbe1fa;
   background-color: #343a40;
-  height: 100%;
+  height: calc(50vh - 43px);
+  overflow: auto;
+}
+.content .col-md-4, .content .col-md-8 {
+  padding-right: 0px;
 }
 .content .col-md-4:nth-last-child(-n+3) {
   margin-top: 10px;
@@ -84,6 +88,13 @@ body {
   cursor: pointer;
 }
 
-.content .col-md-3 {
-  background-color: red;
+.content table {
+  width: 100%;
+  margin-top: 10px;
+  table-layout: fixed;
+}
+.content table tr, .content table td, .content table th{
+  border: 1px solid white;
+  padding: 5px;
+  color: white;
 }

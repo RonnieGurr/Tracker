@@ -25,10 +25,12 @@ app.use(function(err, req, res, next) { // Check if incomming JSON request has s
 const loginRoute = require('./routes/login');
 const getData = require('./routes/getData');
 const saveData = require('./routes/saveData');
+const refreshToken = require('./routes/refreshToken');
 
 app.use('/login', loginRoute)
 app.use('/get-data', getData)
 app.use('/save-data', saveData)
+app.use('/refresh-token', refreshToken)
 
 app.listen(process.env.API_PORT, () => {
     console.log(`Listening on port ${process.env.API_PORT}`)

@@ -2,10 +2,12 @@ import React from 'react';
 import axios from 'axios';
 import '../../css/App.css';
 import {Form, Button} from 'react-bootstrap/';
-import { Redirect } from 'react-router-dom'
+import { BrowserRouter, Redirect } from 'react-router-dom'
+
 const Auth = require('../helpers/checkAuth');
 
 class Login extends React.Component {
+
     constructor() {
         super()
         this.state = {
@@ -14,11 +16,12 @@ class Login extends React.Component {
 
         this.handleInput = this.handleInput.bind(this)
         this.login = this.login.bind(this)
+        this.redirect = this.redirect.bind(this)
     }
 
-    componentDidMount() {
+    redirect() {
         if (this.state.authed) {
-            console.log('Redirecting') //If user is already logged in redirect them to the dashboard
+            window.location.href = "/dashboard";
         }
     }
 
@@ -37,6 +40,9 @@ class Login extends React.Component {
             axios.post('http://localhost:5000/login', {email: this.state.email, password: this.state.password})
             .then(response => {
                 if (response.data.token) {
+                    this.setState({
+                        authed: true
+                    })
                     localStorage.setItem('user', JSON.stringify(response.data))
                 } else {
                     this.setState({
@@ -96,7 +102,7 @@ class Login extends React.Component {
             return (
                 <div>
                     <h1>Please wait while we redirect you</h1>
-                    <Redirect to='/dashboard' />
+                    {this.redirect()}
                 </div>
             )
         }
