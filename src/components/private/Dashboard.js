@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import Chart from "chart.js";
 import Axios from 'axios';
 
+var uniqid = require('uniqid');
 const Auth = require('../helpers/checkAuth');
 const dbHelper = require('../helpers/Dashboard');
 
@@ -19,34 +20,56 @@ class Dashboard extends React.Component {
         }
 
         this.refreshToken = this.refreshToken.bind(this)
+        this.loadData = this.loadData.bind(this)
+        this.millisConversion = this.millisConversion.bind(this)
     }
 
     componentDidMount() {
         const token = JSON.parse(localStorage.getItem('user')).token
         Axios.post(`${apiUrl}/get-data`, {search: 'tags', data: 'dashboard'}, { headers: { 'authorization': `Bearer ${token}`  } })
         .then(response => {
-            const userVisitData = response.data.map(element => {
+            const userVisitData = response.data.filter(element => {
                 delete element._id
                 delete element.__v 
                 if (element.name === 'userVisit') return element
             })
-            this.setState({
-                dashboardData: {userVisitData: userVisitData},
-                loading: false
+            const visitLengthData = response.data.filter(element => {
+                delete element._id
+                delete element.__v 
+                if (element.name === 'visitLength') return element
             })
+            this.setState({
+                dashboardData: {userVisitData: userVisitData, visitLengthData: visitLengthData},
+                loading: false
+            }, () => this.loadData())
         }).catch(err => {
             this.refreshToken()
             console.log('-----SUGGESTIONS------\nNothing stored in data? \nNothing with the tag dashboard? \nDid the server just start or restart? try to refresh.')
         })
     }
 
-    componentDidUpdate() {
+    loadData() {
         if (this.state.dashboardData) {
-           let data = dbHelper.sortData(this.state.dashboardData)
-           let sites = data.userVisitData.urls.map(element => element.url)
-           let visits = data.userVisitData.urls.map(element => element.count)
-        }
+            let userVisits = dbHelper.sortData(this.state.dashboardData, 'userVisit')
+            let sites = userVisits.userVisitData.urls.map(element => element.url)
+            let visits = userVisits.userVisitData.urls.map(element => element.count)
+
+            let visitLength = dbHelper.sortData(this.state.dashboardData, 'visitLength')
+
+            this.setState({
+                dashboardDataSorted: {
+                    userVisits: {sites: sites, visits: visits},
+                    visitLength: {urls: visitLength.visitLength.urls, times: visitLength.visitLength.times}
+                }
+            })
+         }
     }
+
+    millisConversion(millis) {
+        var minutes = Math.floor(millis / 60000);
+        var seconds = ((millis % 60000) / 1000).toFixed(0);
+        return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds} mins`
+      }
 
     refreshToken() {
         console.log('logging back in') // Maybe alert the user?
@@ -83,22 +106,21 @@ class Dashboard extends React.Component {
                                     {this.state.loading ? 'loading' :
                                     <table>
                                         <tbody>
-                                            <tr>
+                                            <tr id={uniqid()}>
                                                 <td>URL</td>
                                                 <td>NUM OF CLICKS</td>
                                             </tr>
-                                            <tr>
-                                                <td>https://google.com/</td>
-                                                <td>624</td>
-                                            </tr>
-                                            <tr>
-                                                <td>https://google.com/</td>
-                                                <td>624</td>
-                                            </tr>
-                                            <tr>
-                                                <td>https://google.com/</td>
-                                                <td>624</td>
-                                            </tr>
+                                            {this.state.dashboardDataSorted && 
+                                                this.state.dashboardDataSorted.userVisits.sites.map((value, index) => {
+                                                    const clicks = this.state.dashboardDataSorted.userVisits.visits[index]
+                                                    return (
+                                                        <tr key={uniqid()}>
+                                                            <td><a href={value} target='_blank'>{value}</a></td>
+                                                            <td>{clicks}</td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
                                         </tbody>
                                     </table>
                                     }   
@@ -106,7 +128,27 @@ class Dashboard extends React.Component {
                             </div>
                             <div className="col-md-4">
                                 <div className='container'>
-                                    {this.state.loading && 'Loading'}
+                                    {this.state.loading ? 'Loading' :
+                                    <table>
+                                        <tbody>
+                                            <tr id={uniqid()}>
+                                                <td>URL</td>
+                                                <td>VISIT LENGTH</td>
+                                            </tr>
+                                            {this.state.dashboardDataSorted && 
+                                                this.state.dashboardDataSorted.visitLength.urls.map((value, index) => {
+                                                    const times = this.state.dashboardDataSorted.visitLength.times[index]
+                                                    return (
+                                                        <tr key={uniqid()}>
+                                                            <td><a href={value} target='_blank'>{value}</a></td>
+                                                            <td>{this.millisConversion(times)}</td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                    }   
                                 </div>
                             </div>
                             <div className="col-md-4">
